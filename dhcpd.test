@@ -1,0 +1,25 @@
+#
+# DHCP daemon
+#
+
+ check process dhcpd with pidfile /var/run/dhcpd.pid
+   group system
+   start program = "/etc/init.d/dhcp3-server start"
+   stop  program = "/etc/init.d/dhcp3-server stop"
+   if failed host 127.0.0.1 port 67 type udp then restart
+   if 5 restarts within 5 cycles then timeout
+   depends on dhcpd_bin
+   depends on dhcpd_rc
+
+ check file dhcpd_bin with path /usr/sbin/dhcpd3
+   group system
+   if failed permission 755 then unmonitor
+   if failed uid root then unmonitor
+   if failed gid root then unmonitor
+
+ check file dhcpd_rc with path /etc/init.d/dhcp3-server
+   group system
+   if failed permission 755 then unmonitor
+   if failed uid root then unmonitor
+   if failed gid root then unmonitor
+

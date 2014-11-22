@@ -1,0 +1,24 @@
+#
+# Simple network management protocol daemon
+#
+
+ check process snmpd with pidfile /var/run/snmpd.pid
+   group system
+   start program = "/etc/init.d/snmpd start"
+   stop program = "/etc/init.d/snmpd stop"
+   if failed host 127.0.0.1 port 161 type udp then restart
+   if 5 restarts within 5 cycles then timeout
+   depends on snmpd_bin
+   depends on snmpd_rc
+
+ check file snmpd_bin with path /usr/sbin/snmpd
+   group system
+   if failed permission 755 then unmonitor
+   if failed uid root then unmonitor
+   if failed gid root then unmonitor
+
+ check file snmpd_rc with path /etc/init.d/snmpd
+   group system
+   if failed permission 755 then unmonitor
+   if failed uid root then unmonitor
+   if failed gid root then unmonitor

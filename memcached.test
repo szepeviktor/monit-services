@@ -1,0 +1,25 @@
+#
+# memcache daemon
+#
+
+ check process memcached with pidfile /var/run/memcached.pid
+   group www
+   start program = "/etc/init.d/memcached start"
+   stop program = "/etc/init.d/memcached stop"
+   if failed host 127.0.0.1 port 11211 type tcp then restart
+   if failed host 127.0.0.1 port 11211 type udp then restart
+   if 5 restarts within 5 cycles then timeout
+   depends on memcached_bin
+   depends on memcached_rc
+
+ check file memcached_bin with path /usr/bin/memcached
+   group www
+   if failed permission 755 then unmonitor
+   if failed uid root then unmonitor
+   if failed gid root then unmonitor
+
+ check file memcached_rc with path /etc/init.d/memcached
+   group www
+   if failed permission 755 then unmonitor
+   if failed uid root then unmonitor
+   if failed gid root then unmonitor

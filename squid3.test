@@ -1,0 +1,24 @@
+#
+# Squid HTTP proxy
+#
+
+ check process squid3 with pidfile /var/run/squid3.pid
+   group www
+   start program = "/etc/init.d/squid3 start"
+   stop program = "/etc/init.d/squid3 stop"
+   if failed host 127.0.0.1 port 3128 type tcp then restart
+   if 5 restarts within 5 cycles then timeout
+   depends on squid3_bin
+   depends on squid3_rc
+
+ check file squid3_bin with path /usr/sbin/squid3
+   group www
+   if failed permission 755 then unmonitor
+   if failed uid root then unmonitor
+   if failed gid root then unmonitor
+
+ check file squid3_rc with path /etc/init.d/squid3
+   group www
+   if failed permission 755 then unmonitor
+   if failed uid root then unmonitor
+   if failed gid root then unmonitor

@@ -1,0 +1,25 @@
+#
+# Dovecot IMAP daemon
+#
+
+ check process dovecot with pidfile /var/run/dovecot/master.pid
+   group mail
+   start program = "/etc/init.d/dovecot start"
+   stop  program = "/etc/init.d/dovecot stop"
+   if failed host 127.0.0.1 port 143 type tcp protocol imap then restart
+   if 5 restarts within 5 cycles then timeout
+   depends on dovecot_bin
+   depends on dovecot_rc
+
+ check file dovecot_bin with path /usr/sbin/dovecot
+   group mail
+   if failed permission 755 then unmonitor
+   if failed uid root then unmonitor
+   if failed gid root then unmonitor
+
+ check file dovecot_rc with path /etc/init.d/dovecot
+   group mail
+   if failed permission 755 then unmonitor
+   if failed uid root then unmonitor
+   if failed gid root then unmonitor
+

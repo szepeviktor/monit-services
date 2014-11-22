@@ -1,0 +1,44 @@
+#
+# Samba file server
+#
+
+ check process smbd with pidfile /var/run/samba/smbd.pid
+   group samba
+   start program = "/etc/init.d/samba start"
+   stop program = "/etc/init.d/samba stop"
+   if failed host 127.0.0.1 port 139 type tcp then restart
+   if 5 restarts within 5 cycles then timeout
+   depends on smbd_bin
+   depends on samba_rc
+
+ check process nmbd with pidfile /var/run/samba/nmbd.pid
+   group samba
+   start program = "/etc/init.d/samba start"
+   stop  program = "/etc/init.d/samba stop"
+   if failed host 127.0.0.1 port 138 type udp then restart
+   if failed host 127.0.0.1 port 137 type udp then restart
+   if 5 restarts within 5 cycles then timeout
+   depends on nmbd_bin
+   depends on samba_rc
+
+ check file nmbd_bin with path /usr/sbin/nmbd
+   group samba
+   if failed checksum then unmonitor
+   if failed permission 755 then unmonitor
+   if failed uid root then unmonitor
+   if failed gid root then unmonitor
+
+ check file smbd_bin with path /usr/sbin/smbd
+   group samba
+   if failed checksum then unmonitor
+   if failed permission 755 then unmonitor
+   if failed uid root then unmonitor
+   if failed gid root then unmonitor
+
+ check file samba_rc with path /etc/init.d/samba
+   group samba
+   if failed checksum then unmonitor
+   if failed permission 755 then unmonitor
+   if failed uid root then unmonitor
+   if failed gid root then unmonitor
+

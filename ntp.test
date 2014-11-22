@@ -1,0 +1,24 @@
+#
+# Network time protocol daemon
+#
+
+ check process ntpd with pidfile /var/run/ntpd.pid
+   group system
+   start program = "/etc/init.d/ntp start"
+   stop  program = "/etc/init.d/ntp stop"
+   if failed host 127.0.0.1 port 123 type udp protocol ntp3 then alert
+   if 5 restarts within 5 cycles then timeout
+   depends on ntpd_bin
+   depends on ntpd_rc
+
+ check file ntpd_bin with path /usr/sbin/ntpd
+   group system
+   if failed permission 755 then unmonitor
+   if failed uid root then unmonitor
+   if failed gid root then unmonitor
+
+ check file ntpd_rc with path /etc/init.d/ntp
+   group system
+   if failed permission 755 then unmonitor
+   if failed uid root then unmonitor
+   if failed gid root then unmonitor

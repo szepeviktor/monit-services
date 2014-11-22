@@ -1,0 +1,26 @@
+#
+# CouchDB daemon
+#
+
+ check process couchdb with pidfile /var/run/couchdb/couchdb.pid
+   group erlang
+   start program = "/etc/init.d/couchdb start"
+   stop  program = "/etc/init.d/couchdb stop"
+   if failed host 127.0.0.1 port 5984 type tcp protocol http then restart
+   if 5 restarts within 5 cycles then timeout
+   depends on beam.smp_bin
+   depends on couchdb_dir
+   depends on couchdb_rc
+
+ check directory couchdb_dir with path /usr/lib/couchdb/erlang/lib/couch-0.10.1/ebin
+   group erlang
+   if failed permission 755 then unmonitor
+   if failed uid root then unmonitor
+   if failed gid root then unmonitor
+
+ check file couchdb_rc with path /etc/init.d/couchdb
+   group erlang
+   if failed permission 755 then unmonitor
+   if failed uid root then unmonitor
+   if failed gid root then unmonitor
+

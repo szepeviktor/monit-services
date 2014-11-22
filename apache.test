@@ -1,0 +1,24 @@
+#
+# Apache 2 webserver
+#
+
+ check process apache with pidfile /var/run/apache2.pid
+   group www
+   start program = "/etc/init.d/apache2 start"
+   stop program = "/etc/init.d/apache2 stop"
+   if failed host 127.0.0.1 port 80 type tcp protocol http request / then restart
+   if 5 restarts within 5 cycles then timeout
+   depends on apache_bin
+   depends on apache_rc
+
+ check file apache_bin with path /usr/sbin/apache2
+   group www
+   if failed permission 755 then unmonitor
+   if failed uid root then unmonitor
+   if failed gid root then unmonitor
+
+ check file apache_rc with path /etc/init.d/apache2
+   group www
+   if failed permission 755 then unmonitor
+   if failed uid root then unmonitor
+   if failed gid root then unmonitor

@@ -1,0 +1,24 @@
+#
+# GnuMP3d audio streaming daemon
+#
+
+ check process gnump3d with pidfile /var/run/gnump3d.pid
+   group www
+   start program = "/etc/init.d/gnump3d start"
+   stop program = "/etc/init.d/gnump3d stop"
+   if failed host 127.0.0.1 port 8888 type tcp protocol http then restart
+   if 5 restarts within 5 cycles then timeout
+   depends on gnump3d_bin
+   depends on gnump3d_rc
+
+ check file gnump3d_bin with path /usr/bin/gnump3d
+   group www
+   if failed permission 755 then unmonitor
+   if failed uid root then unmonitor
+   if failed gid root then unmonitor
+
+ check file gnump3d_rc with path /etc/init.d/gnump3d
+   group www
+   if failed permission 755 then unmonitor
+   if failed uid root then unmonitor
+   if failed gid root then unmonitor

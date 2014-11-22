@@ -1,0 +1,24 @@
+#
+# Puppet configuration management daemon
+#
+
+ check process puppet with pidfile /var/run/puppet/puppetd.pid
+   group puppet
+   start program = "/etc/init.d/puppet start"
+   stop  program = "/etc/init.d/puppet stop"
+   if 5 restarts within 5 cycles then timeout
+   depends on puppet_bin
+   depends on puppet_rc
+
+ check file puppet_bin with path /usr/sbin/puppetd
+   group puppet
+   if failed permission 755 then unmonitor
+   if failed uid root then unmonitor
+   if failed gid root then unmonitor
+
+ check file puppet_rc with path /etc/init.d/puppet
+   group puppet
+   if failed permission 755 then unmonitor
+   if failed uid root then unmonitor
+   if failed gid root then unmonitor
+

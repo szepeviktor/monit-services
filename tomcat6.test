@@ -1,0 +1,19 @@
+#
+# Tomcat6 J2EE server
+#
+
+ check process tomcat6 with pidfile /var/run/tomcat6.pid
+   group java
+   start program = "/etc/init.d/tomcat6 start"
+   stop  program = "/etc/init.d/tomcat6 stop"
+   if failed host 127.0.0.1 port 8009 type tcp then restart
+   if 5 restarts within 5 cycles then timeout
+   depends on tomcat6_rc
+   depends on java_bin
+
+ check file tomcat6_rc with path /etc/init.d/tomcat6
+   group mail
+   if failed permission 755 then unmonitor
+   if failed uid root then unmonitor
+   if failed gid root then unmonitor
+

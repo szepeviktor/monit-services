@@ -1,0 +1,26 @@
+#
+# Ejabberd XMPP daemon
+#
+
+ check process ejabberd with pidfile /var/run/ejabberd/ejabberd.pid
+   group erlang
+   start program = "/etc/init.d/ejabberd start"
+   stop  program = "/etc/init.d/ejabberd stop"
+   if failed host 127.0.0.1 port 5222 type tcp then restart
+   if 5 restarts within 5 cycles then timeout
+   depends on beam_bin
+   depends on ejabberd_dir
+   depends on ejabberd_rc
+
+ check directory ejabberd_dir with path /usr/lib/ejabberd/ebin
+   group erlang
+   if failed permission 755 then unmonitor
+   if failed uid root then unmonitor
+   if failed gid root then unmonitor
+
+ check file ejabberd_rc with path /etc/init.d/ejabberd
+   group erlang
+   if failed permission 755 then unmonitor
+   if failed uid root then unmonitor
+   if failed gid root then unmonitor
+

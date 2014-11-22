@@ -1,0 +1,24 @@
+#
+# LDAP daemon
+#
+
+ check process slapd with pidfile /var/run/slapd/slapd.pid
+   group database
+   start program = "/etc/init.d/slapd start"
+   stop program = "/etc/init.d/slapd stop"
+   if failed host 127.0.0.1 port 389 type tcp protocol ldap3 then restart
+   if 5 restarts within 5 cycles then timeout
+   depends on slapd_bin
+   depends on slapd_rc
+
+ check file slapd_bin with path /usr/sbin/slapd
+   group database
+   if failed permission 755 then unmonitor
+   if failed uid root then unmonitor
+   if failed gid root then unmonitor
+
+ check file slapd_rc with path /etc/init.d/slapd
+   group database
+   if failed permission 755 then unmonitor
+   if failed uid root then unmonitor
+   if failed gid root then unmonitor

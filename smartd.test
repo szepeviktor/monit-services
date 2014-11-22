@@ -1,0 +1,24 @@
+#
+# S.M.A.R.T. hard disk monitoring daemon
+#
+
+ check process smartd with pidfile /var/run/smartd.pid
+   group system
+   start program = "/etc/init.d/smartmontools start"
+   stop  program = "/etc/init.d/smartmontools stop"
+   if 5 restarts within 5 cycles then timeout
+   depends on smartd_bin
+   depends on smartd_rc
+
+ check file smartd_bin with path /usr/sbin/smartd
+   group system
+   if failed permission 755 then unmonitor
+   if failed uid root then unmonitor
+   if failed gid root then unmonitor
+
+ check file smartd_rc with path /etc/init.d/smartmontools
+   group system
+   if failed permission 755 then unmonitor
+   if failed uid root then unmonitor
+   if failed gid root then unmonitor
+

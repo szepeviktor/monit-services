@@ -1,0 +1,44 @@
+#
+# Courier IMAP daemon
+#
+
+ check process courier-imap with pidfile /var/run/courier/imapd.pid
+   group mail
+   start program = "/etc/init.d/courier-imap start"
+   stop  program = "/etc/init.d/courier-imap stop"
+   if failed host 127.0.0.1 port 143 type tcp protocol imap then restart
+   if 5 restarts within 5 cycles then timeout
+   depends on courier-imap_bin
+   depends on courier-imap_rc
+
+ check file courier-imap_bin with path /usr/bin/imapd
+   group mail
+   if failed permission 755 then unmonitor
+   if failed uid root then unmonitor
+   if failed gid root then unmonitor
+
+ check file courier-imap_rc with path /etc/init.d/courier-imap
+   group mail
+   if failed permission 755 then unmonitor
+   if failed uid root then unmonitor
+   if failed gid root then unmonitor
+
+#
+# Courier IMAP over SSL daemon
+#
+
+ check process courier-imap-ssl with pidfile /var/run/courier/imapd-ssl.pid
+   group mail
+   start program = "/etc/init.d/courier-imap-ssl start"
+   stop  program = "/etc/init.d/courier-imap-ssl stop"
+   if failed host 127.0.0.1 port 993 type tcpssl protocol imap then restart
+   if 5 restarts within 5 cycles then timeout
+   depends on courier-imap_bin
+   depends on courier-imap-ssl_rc
+
+ check file courier-imap-ssl_rc with path /etc/init.d/courier-imap-ssl
+   group mail
+   if failed permission 755 then unmonitor
+   if failed uid root then unmonitor
+   if failed gid root then unmonitor
+

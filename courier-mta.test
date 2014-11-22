@@ -1,0 +1,50 @@
+#
+# Courier MTA for SMTP
+#
+
+ check process courier-mta with pidfile /var/run/courier/esmtpd.pid
+   group mail
+   start program = "/etc/init.d/courier-mta start"
+   stop  program = "/etc/init.d/courier-mta stop"
+   if failed host 127.0.0.1 port 25 type tcp then restart
+   #if failed host 127.0.0.1 port 25 type tcp protocol smtp then restart
+   if 5 restarts within 5 cycles then timeout
+   depends on courier-mta_bin
+   depends on courier-mta_rc
+
+ check file courier-mta_bin with path /usr/sbin/courieresmtpd
+   group mail
+   if failed permission 755 then unmonitor
+   if failed uid root then unmonitor
+   if failed gid root then unmonitor
+
+ check file courier-mta_rc with path /etc/init.d/courier-mta
+   group mail
+   if failed permission 755 then unmonitor
+   if failed uid root then unmonitor
+   if failed gid root then unmonitor
+
+#
+# Courier LDAP alias daemon
+#
+
+ check process courier-ldapalias with pidfile /var/run/courier/ldapaliasd.pid
+   group mail
+   start program = "/etc/init.d/courier-ldap start"
+   stop  program = "/etc/init.d/courier-ldap stop"
+   if 5 restarts within 5 cycles then timeout
+   depends on courier-ldapalias_bin
+   depends on courier-ldapalias_rc
+
+ check file courier-ldapalias_bin with path /usr/sbin/courierldapaliasd
+   group mail
+   if failed permission 755 then unmonitor
+   if failed uid root then unmonitor
+   if failed gid root then unmonitor
+
+ check file courier-ldapalias_rc with path /etc/init.d/courier-ldap
+   group mail
+   if failed permission 755 then unmonitor
+   if failed uid root then unmonitor
+   if failed gid root then unmonitor
+

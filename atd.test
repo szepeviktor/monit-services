@@ -1,0 +1,23 @@
+#
+# Atd scheduler daemon
+#
+
+ check process atd with pidfile /var/run/atd.pid
+   group system
+   start program = "/etc/init.d/atd start"
+   stop  program = "/etc/init.d/atd stop"
+   if 5 restarts within 5 cycles then timeout
+   depends on atd_bin
+   depends on atd_rc
+
+ check file atd_bin with path /usr/sbin/atd
+   group system
+   if failed permission 755 then unmonitor
+   if failed uid root then unmonitor
+   if failed gid root then unmonitor
+
+ check file atd_rc with path /etc/init.d/atd
+   group system
+   if failed permission 755 then unmonitor
+   if failed uid root then unmonitor
+   if failed gid root then unmonitor

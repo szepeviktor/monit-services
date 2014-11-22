@@ -1,0 +1,23 @@
+#
+# Nameservice caching daemon
+#
+
+ check process nscd with pidfile /var/run/nscd/nscd.pid
+   group system
+   start program = "/etc/init.d/nscd start"
+   stop  program = "/etc/init.d/nscd stop"
+   if 5 restarts within 5 cycles then timeout
+   depends on nscd_bin
+   depends on nscd_rc
+
+ check file nscd_bin with path /usr/sbin/nscd
+   group system
+   if failed permission 755 then unmonitor
+   if failed uid root then unmonitor
+   if failed gid root then unmonitor
+
+ check file nscd_rc with path /etc/init.d/nscd
+   group system
+   if failed permission 755 then unmonitor
+   if failed uid root then unmonitor
+   if failed gid root then unmonitor

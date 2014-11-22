@@ -1,0 +1,25 @@
+#
+# BIND
+#
+
+ check process bind with pidfile /var/run/named/named.pid
+   group system
+   start program = "/etc/init.d/bind9 start"
+   stop program = "/etc/init.d/bind9 stop"
+   if failed host 127.0.0.1 port 53 type tcp protocol dns then restart
+   if failed host 127.0.0.1 port 53 type udp protocol dns then restart
+   if 5 restarts within 5 cycles then timeout
+   depends on bind_bin
+   depends on bind_rc
+
+ check file bind_bin with path /usr/sbin/named
+   group system
+   if failed permission 755 then unmonitor
+   if failed uid root then unmonitor
+   if failed gid root then unmonitor
+
+ check file bind_rc with path /etc/init.d/bind9
+   group system
+   if failed permission 755 then unmonitor
+   if failed uid root then unmonitor
+   if failed gid root then unmonitor

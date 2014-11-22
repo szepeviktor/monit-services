@@ -1,0 +1,24 @@
+#
+# Courier auth daemon.
+#
+
+ check process courier-authdaemon with pidfile /var/run/courier/authdaemon/pid
+   group mail
+   start program = "/etc/init.d/courier-authdaemon start"
+   stop  program = "/etc/init.d/courier-authdaemon stop"
+   if 5 restarts within 5 cycles then timeout
+   depends on courier-authdaemon_bin
+   depends on courier-authdaemon_rc
+
+ check file courier-authdaemon_rc with path /etc/init.d/courier-authdaemon
+   group mail
+   if failed permission 755 then unmonitor
+   if failed uid root then unmonitor
+   if failed gid root then unmonitor
+
+ check file courier-authdaemon_bin with path /usr/lib/courier/courier-authlib/authdaemond
+   group mail
+   if failed permission 755 then unmonitor
+   if failed uid root then unmonitor
+   if failed gid root then unmonitor
+

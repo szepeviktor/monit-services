@@ -1,0 +1,50 @@
+#
+# ClamAV anti virus checking daemon
+#
+
+ check process clamav-daemon with pidfile /var/run/clamav/clamd.pid
+   group virus
+   start program = "/etc/init.d/clamav-daemon start"
+   stop program = "/etc/init.d/clamav-daemon stop"
+   if failed unixsocket /var/run/clamav/clamd.ctl protocol clamav then restart
+   if 5 restarts within 5 cycles then timeout
+   depends on clamav-daemon_bin
+   depends on clamav-daemon_rc
+
+ check file clamav-daemon_bin with path /usr/sbin/clamd
+   group virus
+   if failed permission 755 then unmonitor
+   if failed uid root then unmonitor
+   if failed gid root then unmonitor
+
+ check file clamav-daemon_rc with path /etc/init.d/clamav-daemon
+   group virus
+   if failed permission 755 then unmonitor
+   if failed uid root then unmonitor
+   if failed gid root then unmonitor
+
+#
+# ClamAVi pattern update checker
+#
+
+ check process clamav-fresh with pidfile /var/run/clamav/freshclam.pid
+   group virus
+   start program = "/etc/init.d/clamav-freshclam start"
+   stop program = "/etc/init.d/clamav-freshclam stop"
+   if 5 restarts within 5 cycles then timeout
+   depends on clamav-freshclam_bin
+   depends on clamav-freshclam_rc
+
+ check file clamav-freshclam_bin with path /usr/bin/freshclam
+   group virus
+   if failed checksum then unmonitor
+   if failed permission 755 then unmonitor
+   if failed uid root then unmonitor
+   if failed gid root then unmonitor
+
+ check file clamav-freshclam_rc with path /etc/init.d/clamav-freshclam
+   group virus
+   if failed checksum then unmonitor
+   if failed permission 755 then unmonitor
+   if failed uid root then unmonitor
+   if failed gid root then unmonitor

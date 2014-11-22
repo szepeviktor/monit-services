@@ -1,0 +1,24 @@
+#
+# HTTP antivirus proxy
+#
+
+ check process havp with pidfile /var/run/havp/havp.pid
+   group www
+   start program = "/etc/init.d/havp start"
+   stop  program = "/etc/init.d/havp stop"
+   if failed host 127.0.0.1 port 3129 type tcp then restart
+   if 5 restarts within 5 cycles then timeout
+   depends on havp_bin
+   depends on havp_rc
+
+ check file havp_bin with path /usr/sbin/havp
+   group www
+   if failed permission 755 then unmonitor
+   if failed uid root then unmonitor
+   if failed gid root then unmonitor
+
+ check file havp_rc with path /etc/init.d/havp
+   group www
+   if failed permission 755 then unmonitor
+   if failed uid root then unmonitor
+   if failed gid root then unmonitor

@@ -1,0 +1,26 @@
+#
+# Tryton ERP&CRM server
+#
+
+ check process tryton with pidfile /var/run/trytond/trytond.pid
+   group mail
+   start program = "/etc/init.d/tryton-server start"
+   stop  program = "/etc/init.d/tryton-server stop"
+   if failed host 127.0.0.1 port 8070 type tcp then restart
+   if 5 restarts within 5 cycles then timeout
+   depends on tryton_bin
+   depends on tryton_rc
+   depends on python_bin
+
+ check file tryton_bin with path /usr/bin/trytond
+   group mail
+   if failed permission 755 then unmonitor
+   if failed uid root then unmonitor
+   if failed gid root then unmonitor
+
+ check file tryton_rc with path /etc/init.d/tryton-server
+   group mail
+   if failed permission 755 then unmonitor
+   if failed uid root then unmonitor
+   if failed gid root then unmonitor
+

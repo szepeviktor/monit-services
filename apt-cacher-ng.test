@@ -1,0 +1,25 @@
+#
+# Dovecot IMAP daemon
+#
+
+ check process apt-cacher-ng with pidfile /var/run/apt-cacher-ng/pid
+   group system
+   start program = "/etc/init.d/apt-cacher-ng start"
+   stop  program = "/etc/init.d/apt-cacher-ng stop"
+   if failed host 127.0.0.1 port 3142 type tcp then restart
+   if 5 restarts within 5 cycles then timeout
+   depends on apt-cacher-ng_bin
+   depends on apt-cacher-ng_rc
+
+ check file apt-cacher-ng_bin with path /usr/sbin/apt-cacher-ng
+   group system
+   if failed permission 755 then unmonitor
+   if failed uid root then unmonitor
+   if failed gid root then unmonitor
+
+ check file apt-cacher-ng_rc with path /etc/init.d/apt-cacher-ng
+   group system
+   if failed permission 755 then unmonitor
+   if failed uid root then unmonitor
+   if failed gid root then unmonitor
+

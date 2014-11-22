@@ -1,0 +1,25 @@
+#
+# Spamassassin daemon
+#
+
+ check process spamd with pidfile /var/run/spamd.pid
+   group mail
+   start program = "/etc/init.d/spamassassin start"
+   stop program = "/etc/init.d/spamassassin stop"
+   if 5 restarts within 5 cycles then timeout
+   if cpu usage > 99% for 5 cycles then alert
+   if mem usage > 99% for 5 cycles then alert
+   depends on spamd_bin
+   depends on spamd_rc
+
+ check file spamd_bin with path /usr/sbin/spamd
+   group mail
+   if failed permission 755 then unmonitor
+   if failed uid root then unmonitor
+   if failed gid root then unmonitor
+
+ check file spamd_rc with path /etc/init.d/spamassassin
+   group mail
+   if failed permission 755 then unmonitor
+   if failed uid root then unmonitor
+   if failed gid root then unmonitor

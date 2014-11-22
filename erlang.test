@@ -1,0 +1,19 @@
+
+ check file beam_bin with path /usr/lib/erlang/erts-5.7.4/bin/beam
+   group erlang
+   if failed permission 755 then unmonitor
+   if failed uid root then unmonitor
+   if failed gid root then unmonitor
+
+ check file beam.smp_bin with path /usr/lib/erlang/erts-5.7.4/bin/beam.smp
+   group erlang
+   if failed permission 755 then unmonitor
+   if failed uid root then unmonitor
+   if failed gid root then unmonitor
+
+ check file epmd_bin with path /usr/lib/erlang/erts-5.7.4/bin/epmd
+   group erlang
+   if failed permission 755 then unmonitor
+   if failed uid root then unmonitor
+   if failed gid root then unmonitor
+

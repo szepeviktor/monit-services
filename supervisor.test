@@ -1,0 +1,25 @@
+#
+# Supervisor task manager daemon
+#
+
+ check process supervisor with pidfile /var/run/supervisord.pid
+   group supervisor
+   start program = "/etc/init.d/supervisor start"
+   stop  program = "/etc/init.d/supervisor stop"
+   if 5 restarts within 5 cycles then timeout
+   depends on supervisor_bin
+   depends on supervisor_rc
+   depends on python_bin
+
+ check file supervisor_bin with path /usr/bin/supervisord
+   group supervisor
+   if failed permission 755 then unmonitor
+   if failed uid root then unmonitor
+   if failed gid root then unmonitor
+
+ check file supervisor_rc with path /etc/init.d/supervisor
+   group supervisor
+   if failed permission 755 then unmonitor
+   if failed uid root then unmonitor
+   if failed gid root then unmonitor
+

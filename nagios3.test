@@ -1,0 +1,24 @@
+#
+# Nagios3 monitoring dameon
+#
+
+ check process nagios3 with pidfile /var/run/nagios3/nagios3.pid
+   group system
+   start program = "/etc/init.d/nagios3 start"
+   stop  program = "/etc/init.d/nagios3 stop"
+   if 5 restarts within 5 cycles then timeout
+   depends on nagios3_bin
+   depends on nagios3_rc
+
+ check file nagios3_bin with path /usr/sbin/nagios3
+   group system
+   if failed permission 755 then unmonitor
+   if failed uid root then unmonitor
+   if failed gid root then unmonitor
+
+ check file nagios3_rc with path /etc/init.d/nagios3
+   group system
+   if failed permission 755 then unmonitor
+   if failed uid root then unmonitor
+   if failed gid root then unmonitor
+

@@ -1,0 +1,26 @@
+#
+# PostgreSQL database server
+#
+
+ check process postgresql-8.4 with pidfile /var/run/postgresql/8.4-main.pid
+   group database
+   start program = "/etc/init.d/postgresql-8.4 start"
+   stop  program = "/etc/init.d/postgresql-8.4 stop"
+   if failed unixsocket /var/run/postgresql/.s.PGSQL.5432 protocol pgsql then restart
+   if failed host 127.0.0.1 port 5432 type tcp protocol pgsql then restart
+   if 5 restarts within 5 cycles then timeout
+   depends on postgres-8.4_bin
+   depends on postgres-8.4_rc
+
+ check file postgres-8.4_bin with path /usr/lib/postgresql/8.4/bin/postgres
+   group database
+   if failed permission 755 then unmonitor
+   if failed uid root then unmonitor
+   if failed gid root then unmonitor
+
+ check file postgres-8.4_rc with path /etc/init.d/postgresql-8.4
+   group database
+   if failed permission 755 then unmonitor
+   if failed uid root then unmonitor
+   if failed gid root then unmonitor
+

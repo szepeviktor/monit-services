@@ -1,0 +1,7 @@
+
+ check file java_bin with path /usr/bin/java
+   group java
+   if failed permission 755 then unmonitor
+   if failed uid root then unmonitor
+   if failed gid root then unmonitor
+
